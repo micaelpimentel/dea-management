@@ -6,6 +6,7 @@ import br.com.dea.management.student.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,16 +23,11 @@ public class StudentService {
     }
 
     public Page<Student> findAllStudentsPaginated(Integer page, Integer pageSize) {
-        return this.studentRepository.findAllPaginated(PageRequest.of(page, pageSize));
+        return this.studentRepository.findAllPaginated(PageRequest.of(page, pageSize,
+                Sort.by("user.name").ascending()));
     }
 
     public Student findStudentById(Integer id) {
-        Optional<Student> student = this.studentRepository.findById(Long.valueOf(id));
-
-        if (student.isPresent()) {
-            return student.get();
-        }
-
-        throw new NotFoundExceptions(Student.class, id);
+        return this.studentRepository.findById(Long.valueOf(id)).orElseThrow(() -> new NotFoundExceptions(Student.class, id));
     }
 }
